@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -26,6 +27,7 @@ import edu.wpi.cscore.VideoSource;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import runner.BallTrackingRunner;
 /*
    JSON format:
@@ -69,6 +71,7 @@ import runner.BallTrackingRunner;
        ]
    }
  */
+import runner.TargetTrackingRunner;
 
 public final class Main {
   private static String configFile = "/boot/frc.json";
@@ -311,10 +314,16 @@ public final class Main {
     // start image processing on camera 0 if present
     if (cameras.size() >= 1) {
       CvSource processedVideo = CameraServer.getInstance().putVideo("Processed", 640, 480);
-      BallTrackingRunner ballTrackingRunner = new BallTrackingRunner(cameras.get(0), processedVideo);
+      Map <String, TargetTrackingRunner> runners = Map.of(
+        BallTrackingRunner.class.getName(), new BallTrackingRunner(cameras.get(0), processedVideo)
+        );
       Thread visionThread = new Thread(() -> {
         for (;;) {
-          ballTrackingRunner.runOnce();
+          String runnerName = SmartDashboard.getString("vision/runnerName", BallTrackingRunner.class.getName());
+          TargetTrackingRunner runner = runners.get(runnerName);
+          if (runner != null) {
+            runner.runOnce();
+          }
         }
       });
       /*

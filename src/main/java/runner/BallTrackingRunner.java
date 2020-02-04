@@ -19,7 +19,7 @@ import pipeline.BallFinderPipeLine;
 import target.BallTarget;
 import utilities.Color;
 
-public class BallTrackingRunner {
+public class BallTrackingRunner implements TargetTrackingRunner {
 	private VisionRunner <BallFinderPipeLine> runner;
 	private CvSource processedVideo;
 	private Gson gson = new Gson();
