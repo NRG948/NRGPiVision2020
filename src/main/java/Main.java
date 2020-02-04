@@ -1,3 +1,4 @@
+
 /*----------------------------------------------------------------------------*/
 /* Copyright (c) 2018 FIRST. All Rights Reserved.                             */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
@@ -9,7 +10,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import com.google.gson.Gson;
@@ -26,16 +26,7 @@ import edu.wpi.cscore.VideoSource;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.vision.VisionPipeline;
-import edu.wpi.first.vision.VisionThread;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
-import org.opencv.core.KeyPoint;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfKeyPoint;
-import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
-
+import runner.BallTrackingRunner;
 /*
    JSON format:
    {
@@ -81,8 +72,6 @@ import org.opencv.imgproc.Imgproc;
 
 public final class Main {
   private static String configFile = "/boot/frc.json";
-  private static final Scalar GREEN_COLOR = new Scalar(0, 255, 0);
-  private static final Scalar RED_COLOR = new Scalar(0, 0, 255);
 
   @SuppressWarnings("MemberName")
   public static class CameraConfig {
@@ -286,18 +275,6 @@ public final class Main {
   }
 
   /**
-   * Example pipeline.
-   */
-  public static class MyPipeline implements VisionPipeline {
-    public int val;
-
-    @Override
-    public void process(Mat mat) {
-      val += 1;
-    }
-  }
-
-  /**
    * Main.
    */
   public static void main(String... args) {
@@ -334,49 +311,17 @@ public final class Main {
     // start image processing on camera 0 if present
     if (cameras.size() >= 1) {
       CvSource processedVideo = CameraServer.getInstance().putVideo("Processed", 640, 480);
-      Gson gson = new Gson();
-      VisionThread visionThread = new VisionThread(cameras.get(0), new BallFinderPipeLine(), pipeline -> {
-        long startTime = System.nanoTime();
-
-        //Convert Blobs detected from the GRIP pipeline to BallTarget objects
-        Mat image = pipeline.getImage();
-        ArrayList<BallTarget> ballTargets = new ArrayList<BallTarget>();
-        MatOfKeyPoint keyPoints = pipeline.findBlobsOutput();
-        for (KeyPoint keyPoint : keyPoints.toArray()) {
-          ballTargets.add(new BallTarget(keyPoint.pt, keyPoint.size));
+      BallTrackingRunner ballTrackingRunner = new BallTrackingRunner(cameras.get(0), processedVideo);
+      Thread visionThread = new Thread(() -> {
+        for (;;) {
+          ballTrackingRunner.runOnce();
         }
-
-        //Sort list of ball targets in order of closest to furthest
-        Collections.sort(ballTargets, (left, right) -> (int)(left.distanceToTarget()-right.distanceToTarget()));
-
-        //Annotate the image by outlineing the closest target in green and rest in red
-        Scalar targetColor = GREEN_COLOR;
-        for(BallTarget ballTarget: ballTargets){
-          Imgproc.circle(image, ballTarget.getCenter(), (int) ballTarget.getDiameterInPixels() / 2, targetColor, 2);
-          targetColor = RED_COLOR;
-        }
-
-        //Put the annotated frame out to the processed video stream
-        processedVideo.putFrame(image);
-
-        //Convert BallTarget objects to Json
-        String[] ballTargetsJson = new String[ballTargets.size()];
-        for (int i = 0; i < ballTargets.size(); ++i) {
-          ballTargetsJson[i] = gson.toJson(ballTargets.get(i));
-        }
-
-        long endTime = System.nanoTime();
-
-        //Send Target data to smartdashboard 
-        SmartDashboard.putNumber("Vision/processTime", pipeline.getProcessTime() / 1000000.0);
-        SmartDashboard.putNumber("Vision/postProcessTime", (endTime - startTime) / 1000000.0);
-        SmartDashboard.putStringArray("Vision/ballTargets", ballTargetsJson);
-        // do something with pipeline results
       });
       /*
        * something like this for GRIP: VisionThread visionThread = new
        * VisionThread(cameras.get(0), new GripPipeline(), pipeline -> { ... });
        */
+      visionThread.setDaemon(true);
       visionThread.start();
     }
 
