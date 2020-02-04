@@ -1,3 +1,5 @@
+package target;
+
 import org.opencv.core.Point;
 
 public class BallTarget {
