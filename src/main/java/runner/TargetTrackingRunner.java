@@ -86,8 +86,8 @@ public abstract class TargetTrackingRunner<Pipeline extends VisionPipeline> {
      * This method is implemented by a subclass to process the GRIP pipeline outputs
      * for the current image.
      * 
-     * @param pipeline
-     * @param image
+     * @param pipeline The GRIP pipeline.
+     * @param image The processed image.
      */
     protected abstract void process(Pipeline pipeline, Mat image);
 }
