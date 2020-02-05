@@ -18,8 +18,6 @@ import org.opencv.imgproc.*;
  * @author GRIP
  */
 public class BallFinderPipeLine implements VisionPipeline {
-	// Inputs
-	private Mat image;
 
 	// Outputs
 	private Mat hsvThresholdOutput = new Mat();
@@ -32,13 +30,9 @@ public class BallFinderPipeLine implements VisionPipeline {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 	}
 
-	public Mat getImage() {
-		return image;
-	}
-	public double getProcessTime(){
+	public double getProcessTime() {
 		return processTime;
 	}
-	
 
 	/**
 	 * This is the primary method that runs the entire pipeline and updates the
@@ -47,7 +41,7 @@ public class BallFinderPipeLine implements VisionPipeline {
 	@Override
 	public void process(Mat source0) {
 		long startTime = System.nanoTime();
-		image = source0;
+
 		// Step HSV_Threshold0:
 		Mat hsvThresholdInput = source0;
 		double[] hsvThresholdHue = { 16.18705035971223, 39.09090909090909 };
