@@ -20,7 +20,8 @@ public abstract class TargetTrackingRunner<Pipeline extends VisionPipeline> {
     private VisionRunner<Wrapper> runner;
 
     /**
-     * A wrapper that allows us to capture the current image being processed
+     * A wrapper that allows us to capture the current image to be processed by the
+     * GRIP pipeline.
      */
     private class Wrapper implements VisionPipeline {
         @Override
@@ -28,7 +29,6 @@ public abstract class TargetTrackingRunner<Pipeline extends VisionPipeline> {
             image = arg0;
             pipeline.process(arg0);
         }
-
     }
 
     /**
@@ -42,7 +42,7 @@ public abstract class TargetTrackingRunner<Pipeline extends VisionPipeline> {
         this.videoSource = videoSource;
         this.pipeline = pipeline;
         this.processedVideo = processedVideo;
-        this.runner = new VisionRunner<Wrapper>(videoSource, new Wrapper(), this::process);
+        this.runner = new VisionRunner<Wrapper>(videoSource, new Wrapper(), this::unwrap);
 
     }
 
@@ -73,12 +73,12 @@ public abstract class TargetTrackingRunner<Pipeline extends VisionPipeline> {
     }
 
     /**
-     * This method is called by the Wrapper when the GRIP pipeline has produced
-     * outputs.
+     * This method is called by the VisionRunner<Wrapper> object when the GRIP
+     * pipeline has produced outputs.
      * 
-     * @param pipeline
+     * @param wrapper Unused.
      */
-    private void process(Wrapper pipeline) {
+    private void unwrap(Wrapper wrapper) {
         this.process(this.pipeline, this.image);
     }
 
@@ -90,5 +90,4 @@ public abstract class TargetTrackingRunner<Pipeline extends VisionPipeline> {
      * @param image
      */
     protected abstract void process(Pipeline pipeline, Mat image);
-
 }
