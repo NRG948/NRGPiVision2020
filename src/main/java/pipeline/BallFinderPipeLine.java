@@ -3,11 +3,20 @@ package pipeline;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.HashMap;
 
 import edu.wpi.first.vision.VisionPipeline;
+
 import org.opencv.core.*;
+import org.opencv.core.Core.*;
 import org.opencv.features2d.FeatureDetector;
+import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.*;
+import org.opencv.objdetect.*;
 
 /**
  * BallFinderPipeLine class.
@@ -24,14 +33,9 @@ public class BallFinderPipeLine implements VisionPipeline {
 	private Mat cvErodeOutput = new Mat();
 	private Mat maskOutput = new Mat();
 	private MatOfKeyPoint findBlobsOutput = new MatOfKeyPoint();
-	private long processTime = 0;
 
 	static {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-	}
-
-	public double getProcessTime() {
-		return processTime;
 	}
 
 	/**
@@ -40,8 +44,6 @@ public class BallFinderPipeLine implements VisionPipeline {
 	 */
 	@Override
 	public void process(Mat source0) {
-		long startTime = System.nanoTime();
-
 		// Step HSV_Threshold0:
 		Mat hsvThresholdInput = source0;
 		double[] hsvThresholdHue = { 16.18705035971223, 39.09090909090909 };
@@ -70,8 +72,6 @@ public class BallFinderPipeLine implements VisionPipeline {
 		double[] findBlobsCircularity = { 0.0, 1.0 };
 		boolean findBlobsDarkBlobs = false;
 		findBlobs(findBlobsInput, findBlobsMinArea, findBlobsCircularity, findBlobsDarkBlobs, findBlobsOutput);
-		long endTime = System.nanoTime();
-		processTime = endTime - startTime;
 
 	}
 
@@ -224,4 +224,5 @@ public class BallFinderPipeLine implements VisionPipeline {
 
 		blobDet.detect(input, blobList);
 	}
+
 }
