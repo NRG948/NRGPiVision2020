@@ -28,7 +28,9 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import pipeline.LoadingStationPipeline;
 import runner.FuelCellTrackingRunner;
+import runner.LoadingStationRunner;
 /*
    JSON format:
    {
@@ -315,11 +317,13 @@ public final class Main {
     if (cameras.size() >= 1) {
       CvSource processedVideo = CameraServer.getInstance().putVideo("Processed", 640, 480);
       Map <String, TargetTrackingRunner> runners = Map.of(
-        FuelCellTrackingRunner.class.getName(), new FuelCellTrackingRunner(cameras.get(0), processedVideo)
+        FuelCellTrackingRunner.class.getSimpleName(), new FuelCellTrackingRunner(cameras.get(0), processedVideo),
+        LoadingStationRunner.class.getSimpleName(), new LoadingStationRunner(cameras.get(0), processedVideo)
         );
       Thread visionThread = new Thread(() -> {
+        SmartDashboard.putString("Vision/runnerName", FuelCellTrackingRunner.class.getSimpleName());
         for (;;) {
-          String runnerName = SmartDashboard.getString("vision/runnerName", FuelCellTrackingRunner.class.getName());
+          String runnerName = SmartDashboard.getString("Vision/runnerName", FuelCellTrackingRunner.class.getSimpleName());
           TargetTrackingRunner runner = runners.get(runnerName);
           if (runner != null) {
             runner.runOnce();
