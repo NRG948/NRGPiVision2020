@@ -39,7 +39,6 @@ public class BallTrackingRunner extends TargetTrackingRunner<BallFinderPipeLine>
    * Processes the outputs of the GRIP pipeline for tracking fuel cells.
    */
   protected void process(BallFinderPipeLine pipeline, Mat image) {
-    long startTime = System.nanoTime();
 
     // Convert Blobs detected from the GRIP pipeline to BallTarget objects
     ArrayList<BallTarget> ballTargets = new ArrayList<BallTarget>();
@@ -58,22 +57,14 @@ public class BallTrackingRunner extends TargetTrackingRunner<BallFinderPipeLine>
       targetColor = Color.RED;
     }
 
-    // Put the annotated frame out to the processed video stream
-    getProcessedVideo().putFrame(image);
-
     // Convert BallTarget objects to Json
     String[] ballTargetsJson = new String[ballTargets.size()];
     for (int i = 0; i < ballTargets.size(); ++i) {
       ballTargetsJson[i] = gson.toJson(ballTargets.get(i));
     }
 
-    long endTime = System.nanoTime();
-
     // Send Target data to smartdashboard
-    SmartDashboard.putNumber("Vision/processTime", pipeline.getProcessTime() / 1000000.0);
-    SmartDashboard.putNumber("Vision/postProcessTime", (endTime - startTime) / 1000000.0);
     SmartDashboard.putStringArray("Vision/ballTargets", ballTargetsJson);
-    // do something with pipeline results
   }
 
 }

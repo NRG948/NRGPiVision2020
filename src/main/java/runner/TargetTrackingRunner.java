@@ -6,6 +6,8 @@ import edu.wpi.cscore.CvSource;
 import edu.wpi.cscore.VideoSource;
 import edu.wpi.first.vision.VisionPipeline;
 import edu.wpi.first.vision.VisionRunner;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import utilities.Convert;
 
 /**
  * Genaric class to manage running a GRIP pipeline
@@ -18,6 +20,8 @@ public abstract class TargetTrackingRunner<Pipeline extends VisionPipeline> {
     private CvSource processedVideo;
     private Mat image;
     private VisionRunner<Wrapper> runner;
+    private long pipelineStartTime;
+    private long postProcessStartTime;
 
     /**
      * A wrapper that allows us to capture the current image to be processed by the
@@ -26,6 +30,7 @@ public abstract class TargetTrackingRunner<Pipeline extends VisionPipeline> {
     private class Wrapper implements VisionPipeline {
         @Override
         public void process(Mat arg0) {
+            pipelineStartTime = System.nanoTime();
             image = arg0;
             pipeline.process(arg0);
         }
@@ -68,8 +73,14 @@ public abstract class TargetTrackingRunner<Pipeline extends VisionPipeline> {
      * Runs one iteration of the GRIP pipeline.
      */
     public void runOnce() {
+        //One iteration of the GRIP pipeline
         this.runner.runOnce();
-
+        //Put the processed image to the output video stream
+        this.processedVideo.putFrame(this.image);
+        //Report latency statistics to smart dashboard
+        long pipelineEndTime = System.nanoTime();
+        SmartDashboard.putNumber("Vision/Latency/totalTime", Convert.nanosToMillis(pipelineEndTime-this.pipelineStartTime));
+        SmartDashboard.putNumber("Vision/Latency/postProcessTime", Convert.nanosToMillis(pipelineEndTime-this.postProcessStartTime));
     }
 
     /**
@@ -79,6 +90,7 @@ public abstract class TargetTrackingRunner<Pipeline extends VisionPipeline> {
      * @param wrapper Unused.
      */
     private void unwrap(Wrapper wrapper) {
+        postProcessStartTime = System.nanoTime();
         this.process(this.pipeline, this.image);
     }
 
