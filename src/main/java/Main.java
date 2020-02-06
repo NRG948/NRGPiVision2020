@@ -316,24 +316,26 @@ public final class Main {
     // start image processing on camera 0 if present
     if (cameras.size() >= 1) {
       CvSource processedVideo = CameraServer.getInstance().putVideo("Processed", 640, 480);
-      Map <String, TargetTrackingRunner> runners = Map.of(
-        FuelCellTrackingRunner.class.getSimpleName(), new FuelCellTrackingRunner(cameras.get(0), processedVideo),
-        LoadingStationRunner.class.getSimpleName(), new LoadingStationRunner(cameras.get(0), processedVideo)
-        );
+
+      Map<String, TargetTrackingRunner<?>> runners = Map.of(FuelCellTrackingRunner.class.getSimpleName(),
+          new FuelCellTrackingRunner(cameras.get(0), processedVideo), LoadingStationRunner.class.getSimpleName(),
+          new LoadingStationRunner(cameras.get(0), processedVideo));
+
       Thread visionThread = new Thread(() -> {
+        // TODO Remove the following line once pipeline selection is implemented in the robot code.
         SmartDashboard.putString("Vision/runnerName", FuelCellTrackingRunner.class.getSimpleName());
+
         for (;;) {
-          String runnerName = SmartDashboard.getString("Vision/runnerName", FuelCellTrackingRunner.class.getSimpleName());
-          TargetTrackingRunner runner = runners.get(runnerName);
+          String runnerName = SmartDashboard.getString("Vision/runnerName",
+              FuelCellTrackingRunner.class.getSimpleName());
+          TargetTrackingRunner<?> runner = runners.get(runnerName);
+
           if (runner != null) {
             runner.runOnce();
           }
         }
       });
-      /*
-       * something like this for GRIP: VisionThread visionThread = new
-       * VisionThread(cameras.get(0), new GripPipeline(), pipeline -> { ... });
-       */
+
       visionThread.setDaemon(true);
       visionThread.start();
     }
