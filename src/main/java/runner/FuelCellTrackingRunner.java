@@ -15,7 +15,7 @@ import edu.wpi.cscore.CvSource;
 import edu.wpi.cscore.VideoSource;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import pipeline.FuelCellTrackingPipeLine;
-import target.BallTarget;
+import target.FuelCellTarget;
 import utilities.Color;
 
 /**
@@ -41,10 +41,10 @@ public class FuelCellTrackingRunner extends TargetTrackingRunner<FuelCellTrackin
   protected void process(FuelCellTrackingPipeLine pipeline, Mat image) {
 
     // Convert Blobs detected from the GRIP pipeline to BallTarget objects
-    ArrayList<BallTarget> ballTargets = new ArrayList<BallTarget>();
+    ArrayList<FuelCellTarget> ballTargets = new ArrayList<FuelCellTarget>();
     MatOfKeyPoint keyPoints = pipeline.findBlobsOutput();
     for (KeyPoint keyPoint : keyPoints.toArray()) {
-      ballTargets.add(new BallTarget(keyPoint.pt, keyPoint.size));
+      ballTargets.add(new FuelCellTarget(keyPoint.pt, keyPoint.size));
     }
 
     // Sort list of ball targets in order of closest to furthest
@@ -52,7 +52,7 @@ public class FuelCellTrackingRunner extends TargetTrackingRunner<FuelCellTrackin
 
     // Annotate the image by outlineing the closest target in green and rest in red
     Scalar targetColor = Color.GREEN;
-    for (BallTarget ballTarget : ballTargets) {
+    for (FuelCellTarget ballTarget : ballTargets) {
       Imgproc.circle(image, ballTarget.getCenter(), (int) ballTarget.getDiameterInPixels() / 2, targetColor, 2);
       targetColor = Color.RED;
     }
