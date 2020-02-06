@@ -28,7 +28,7 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import runner.BallTrackingRunner;
+import runner.FuelCellTrackingRunner;
 /*
    JSON format:
    {
@@ -315,11 +315,11 @@ public final class Main {
     if (cameras.size() >= 1) {
       CvSource processedVideo = CameraServer.getInstance().putVideo("Processed", 640, 480);
       Map <String, TargetTrackingRunner> runners = Map.of(
-        BallTrackingRunner.class.getName(), new BallTrackingRunner(cameras.get(0), processedVideo)
+        FuelCellTrackingRunner.class.getName(), new FuelCellTrackingRunner(cameras.get(0), processedVideo)
         );
       Thread visionThread = new Thread(() -> {
         for (;;) {
-          String runnerName = SmartDashboard.getString("vision/runnerName", BallTrackingRunner.class.getName());
+          String runnerName = SmartDashboard.getString("vision/runnerName", FuelCellTrackingRunner.class.getName());
           TargetTrackingRunner runner = runners.get(runnerName);
           if (runner != null) {
             runner.runOnce();

@@ -14,14 +14,14 @@ import org.opencv.imgproc.Imgproc;
 import edu.wpi.cscore.CvSource;
 import edu.wpi.cscore.VideoSource;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import pipeline.BallFinderPipeLine;
+import pipeline.FuelCellTrackingPipeLine;
 import target.BallTarget;
 import utilities.Color;
 
 /**
  * Runs the GRIP pipeline for tracking fuel cells.
  */
-public class BallTrackingRunner extends TargetTrackingRunner<BallFinderPipeLine> {
+public class FuelCellTrackingRunner extends TargetTrackingRunner<FuelCellTrackingPipeLine> {
   private Gson gson = new Gson();
 
   /**
@@ -31,14 +31,14 @@ public class BallTrackingRunner extends TargetTrackingRunner<BallFinderPipeLine>
    * @param pipeline       The GRIP pipeline.
    * @param processedVideo The annotated output video.
    */
-  public BallTrackingRunner(VideoSource videoSource, CvSource processedVideo) {
-    super(videoSource, new BallFinderPipeLine(), processedVideo);
+  public FuelCellTrackingRunner(VideoSource videoSource, CvSource processedVideo) {
+    super(videoSource, new FuelCellTrackingPipeLine(), processedVideo);
   }
 
   /**
    * Processes the outputs of the GRIP pipeline for tracking fuel cells.
    */
-  protected void process(BallFinderPipeLine pipeline, Mat image) {
+  protected void process(FuelCellTrackingPipeLine pipeline, Mat image) {
 
     // Convert Blobs detected from the GRIP pipeline to BallTarget objects
     ArrayList<BallTarget> ballTargets = new ArrayList<BallTarget>();
