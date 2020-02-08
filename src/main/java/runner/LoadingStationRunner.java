@@ -21,9 +21,23 @@ public class LoadingStationRunner extends TargetTrackingRunner<LoadingStationPip
     public class TargetData {
         public double height;
         public double centerX;
-        public TargetData(double height, double centerX) {
+        public Point upperLeft;
+        public Point upperRight;
+        public Point bottomLeft;
+        public Point bottomRight;
+        public double skew;
+        public TargetData(double height, double centerX, Point upperLeft, Point upperRight, Point bottomLeft, Point bottomRight, double skew) {
             this.height = height;
             this.centerX = centerX;
+            this.upperLeft = upperLeft;
+            this.upperRight = upperRight;
+            this.bottomLeft = bottomLeft;
+            this.bottomRight = bottomRight;
+            this.skew = skew;
+        }
+        
+        public TargetData() {
+
         }
     }
     
@@ -37,7 +51,7 @@ public class LoadingStationRunner extends TargetTrackingRunner<LoadingStationPip
     protected void process(LoadingStationPipeline pipeline, Mat image) {
         // TODO Auto-generated method stub
         ArrayList<LoadingStationTarget> targets = new ArrayList<LoadingStationTarget>();
-        TargetData data = new TargetData(0, 0);
+        TargetData data = new TargetData();
         double areaMax = 0;
         MatOfPoint biggestMat = null;
         for (MatOfPoint mat : pipeline.findContoursOutput()) {
@@ -48,14 +62,16 @@ public class LoadingStationRunner extends TargetTrackingRunner<LoadingStationPip
         }
 
         if (biggestMat != null) {
-            //double height = calculateHeight(mat);
             data = calculateTargetData(biggestMat);
-            // Bad logical
-            LoadingStationTarget target = new LoadingStationTarget(biggestMat);
-            targets.add(target);
-            ArrayList<MatOfPoint> polyList = new ArrayList<MatOfPoint>();
-            polyList.add(target.toMatOfPoint());
-            Imgproc.polylines(image, polyList, true, Color.RED, 2);
+
+            Point centerBottom = new Point((data.bottomRight.x + data.bottomLeft.x) / 2.0, (data.bottomRight.y + data.bottomLeft.y) / 2.0);
+            Point centerTop = new Point((data.upperRight.x + data.upperLeft.x) / 2.0, (data.upperRight.y + data.upperLeft.y) / 2.0);
+
+            Imgproc.line(image, data.upperLeft, data.upperRight, Color.GREEN, 2);
+            Imgproc.line(image, data.upperRight, data.bottomRight, Color.GREEN, 2);
+            Imgproc.line(image, data.bottomRight, data.bottomLeft, Color.GREEN, 2);
+            Imgproc.line(image, data.bottomLeft, data.upperLeft, Color.GREEN, 2);
+            Imgproc.line(image, centerBottom, centerTop, Color.RED, 1);
         }
         String[] targetsJson = new String[targets.size()];
         for (int i = 0; i < targets.size(); ++i) {
@@ -102,9 +118,16 @@ public class LoadingStationRunner extends TargetTrackingRunner<LoadingStationPip
                 bottomRight.y = point.y;
             }
         }
-        double height = (bottomLeft.y - upperLeft.y + bottomRight.y - upperRight.y) / 2.0;
+        double heightLeft = bottomLeft.y - upperLeft.y;
+        double heightRight = bottomRight.y - upperRight.y;
+        double height = (heightLeft + heightRight) / 2.0;
+        double widthBottom = bottomRight.x - bottomLeft.x;
+        double widthTop = upperRight.x - upperLeft.x;
+        double width = (widthBottom + widthTop) / 2.0;
         double centerX = (bottomRight.x - bottomLeft.x + upperRight.x - upperRight.y) / 2.0;
-        return new TargetData(height, centerX);
+        int leftOrRight = heightRight > heightLeft ? 1 : -1;
+        // Skew is from -1.0 to 1.0, with negative values representing the robot being to the left of the target, and positive to the right
+        double skew = (11.0 / 7.0) * (width / height) * leftOrRight; 
+        return new TargetData(height, centerX, upperLeft, upperRight, bottomLeft, bottomRight, skew);
     }
-
 }
