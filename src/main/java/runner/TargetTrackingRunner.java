@@ -76,7 +76,9 @@ public abstract class TargetTrackingRunner<Pipeline extends VisionPipeline> {
         //One iteration of the GRIP pipeline
         this.runner.runOnce();
         //Put the processed image to the output video stream
-        this.processedVideo.putFrame(this.image);
+        if (image != null) {
+            this.processedVideo.putFrame(this.image);
+        }
         //Report latency statistics to smart dashboard
         long pipelineEndTime = System.nanoTime();
         SmartDashboard.putNumber("Vision/Latency/totalTime", Convert.nanosToMillis(pipelineEndTime-this.pipelineStartTime));

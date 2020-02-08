@@ -25,21 +25,27 @@ public class LoadingStationRunner extends TargetTrackingRunner<LoadingStationPip
         public Point upperRight;
         public Point bottomLeft;
         public Point bottomRight;
+        public double distance;
         public double skew;
-        public TargetData(double height, double centerX, Point upperLeft, Point upperRight, Point bottomLeft, Point bottomRight, double skew) {
+        public double skewDegrees;
+        public TargetData(double height, double centerX, Point upperLeft, Point upperRight, Point bottomLeft, Point bottomRight, 
+                double distance, double skew, double skewDegrees) {
             this.height = height;
             this.centerX = centerX;
             this.upperLeft = upperLeft;
             this.upperRight = upperRight;
             this.bottomLeft = bottomLeft;
             this.bottomRight = bottomRight;
+            this.distance = distance;
             this.skew = skew;
+            this.skewDegrees= skewDegrees;
         }
-        
-        public TargetData() {
-
-        }
+        public TargetData() {}
     }
+
+    private final double TARGET_HEIGHT_INCHES = 11.0;
+    private final double IMAGE_CENTER_Y = 480.0 / 2;
+    private final double HALF_IMAGE_FOV_Y = Math.atan(17.4375 / 37);
     
     private Gson gson = new Gson();
 
@@ -80,7 +86,10 @@ public class LoadingStationRunner extends TargetTrackingRunner<LoadingStationPip
         SmartDashboard.putStringArray("Vision/LoadingStationTargets", targetsJson);
         SmartDashboard.putNumber("Vision/LoadingStationCount", targets.size());
         SmartDashboard.putNumber("Vision/LoadingStation/Height", data.height);
+        SmartDashboard.putNumber("Vision/LoadingStation/DistanceInches", data.distance);
         SmartDashboard.putNumber("Vision/LoadingStation/CenterX", data.centerX);
+        SmartDashboard.putNumber("Vision/LoadingStation/Skew", data.skew);
+        SmartDashboard.putNumber("Vision/LoadingStation/SkewDegrees", data.skewDegrees);
     }
 
     public TargetData calculateTargetData(MatOfPoint mat) {
@@ -118,16 +127,18 @@ public class LoadingStationRunner extends TargetTrackingRunner<LoadingStationPip
                 bottomRight.y = point.y;
             }
         }
-        double heightLeft = bottomLeft.y - upperLeft.y;
-        double heightRight = bottomRight.y - upperRight.y;
+        double heightLeft = Math.sqrt(Math.pow(bottomLeft.y - upperLeft.y, 2.0) + Math.pow(bottomLeft.x - upperLeft.x, 2.0));
+        double heightRight = Math.sqrt(Math.pow(bottomRight.y - upperRight.y, 2.0) + Math.pow(bottomRight.x - upperRight.x, 2.0));
         double height = (heightLeft + heightRight) / 2.0;
-        double widthBottom = bottomRight.x - bottomLeft.x;
-        double widthTop = upperRight.x - upperLeft.x;
+        double widthBottom = Math.sqrt(Math.pow(bottomRight.x - bottomLeft.x, 2.0) + Math.pow(bottomRight.y - bottomLeft.y, 2.0));
+        double widthTop = Math.sqrt(Math.pow(upperRight.x - upperLeft.x, 2.0) + Math.pow(upperRight.y - upperLeft.y, 2.0));
         double width = (widthBottom + widthTop) / 2.0;
         double centerX = (bottomRight.x - bottomLeft.x + upperRight.x - upperRight.y) / 2.0;
         int leftOrRight = heightRight > heightLeft ? 1 : -1;
         // Skew is from -1.0 to 1.0, with negative values representing the robot being to the left of the target, and positive to the right
-        double skew = (11.0 / 7.0) * (width / height) * leftOrRight; 
-        return new TargetData(height, centerX, upperLeft, upperRight, bottomLeft, bottomRight, skew);
+        double skew = Math.abs(1 - (11.0 / 7.0) * (width / height)) * leftOrRight; 
+        double skewDegrees = Math.acos(Math.min(1.0, (11.0 / 7.0) * (width / height))) * (180 / Math.PI) * leftOrRight;
+        double distance = (TARGET_HEIGHT_INCHES * IMAGE_CENTER_Y / (height * Math.tan(HALF_IMAGE_FOV_Y)));
+        return new TargetData(height, centerX, upperLeft, upperRight, bottomLeft, bottomRight, distance, skew, skewDegrees);
     }
 }
