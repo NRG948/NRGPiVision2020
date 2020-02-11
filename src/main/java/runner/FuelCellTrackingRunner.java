@@ -51,7 +51,7 @@ public class FuelCellTrackingRunner extends TargetTrackingRunner<FuelCellTrackin
     Collections.sort(ballTargets, (left, right) -> (int) (left.distanceToTarget() - right.distanceToTarget()));
 
     // Annotate the image by outlineing the closest target in green and rest in red
-    Scalar targetColor = Color.GREEN;
+    Scalar targetColor = Color.BLUE;
     for (FuelCellTarget ballTarget : ballTargets) {
       Imgproc.circle(image, ballTarget.getCenter(), (int) ballTarget.getDiameterInPixels() / 2, targetColor, 2);
       targetColor = Color.RED;
