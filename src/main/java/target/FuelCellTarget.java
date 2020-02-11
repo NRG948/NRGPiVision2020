@@ -18,9 +18,9 @@ public class FuelCellTarget {
     public double getDiameterInPixels(){
         return diameterInPixels;
     }
-    public double distanceToTarget(){
+    public double getDistanceToTarget(){
         double distance = (TARGET_WIDTH_INCHES * IMAGE_CENTER_X / (diameterInPixels * Math.tan(HALF_IMAGE_FOV)));
-        return distance / Math.cos(Math.toRadians(this.getAngleToTarget()));
+        return distance;
     }
     public double getAngleToTarget() {
         double deltaX = center.x - IMAGE_CENTER_X;

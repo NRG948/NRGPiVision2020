@@ -3,8 +3,6 @@ package runner;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import com.google.gson.Gson;
-
 import org.opencv.core.KeyPoint;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfKeyPoint;
@@ -22,7 +20,6 @@ import utilities.Color;
  * Runs the GRIP pipeline for tracking fuel cells.
  */
 public class FuelCellTrackingRunner extends TargetTrackingRunner<FuelCellTrackingPipeLine> {
-  private Gson gson = new Gson();
 
   /**
    * Contructs an instance of this class.
@@ -48,7 +45,7 @@ public class FuelCellTrackingRunner extends TargetTrackingRunner<FuelCellTrackin
     }
 
     // Sort list of ball targets in order of closest to furthest
-    Collections.sort(ballTargets, (left, right) -> (int) (left.distanceToTarget() - right.distanceToTarget()));
+    Collections.sort(ballTargets, (left, right) -> (int) (left.getDistanceToTarget() - right.getDistanceToTarget()));
 
     // Annotate the image by outlineing the closest target in green and rest in red
     Scalar targetColor = Color.BLUE;
@@ -57,14 +54,14 @@ public class FuelCellTrackingRunner extends TargetTrackingRunner<FuelCellTrackin
       targetColor = Color.RED;
     }
 
-    // Convert BallTarget objects to Json
-    String[] ballTargetsJson = new String[ballTargets.size()];
-    for (int i = 0; i < ballTargets.size(); ++i) {
-      ballTargetsJson[i] = gson.toJson(ballTargets.get(i));
-    }
-
     // Send Target data to smartdashboard
-    SmartDashboard.putStringArray("Vision/ballTargets", ballTargetsJson);
+    if (!ballTargets.isEmpty()) {
+      SmartDashboard.putBoolean("Vision/fuelCell/hasTarget", true);
+      FuelCellTarget fuelCellTarget = ballTargets.get(0);
+      SmartDashboard.putNumber("Vision/fuelCell/distance", fuelCellTarget.getDistanceToTarget());
+      SmartDashboard.putNumber("Vision/fuelCell/angle", fuelCellTarget.getAngleToTarget());
+    } else {
+      SmartDashboard.putBoolean("Vision/fuelCell/hasTarget", false);
+    }
   }
-
 }
