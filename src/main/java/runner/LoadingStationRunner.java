@@ -26,8 +26,11 @@ public class LoadingStationRunner extends TargetTrackingRunner<LoadingStationPip
         MatOfPoint biggestMat = null;
         for (MatOfPoint mat : pipeline.findContoursOutput()) {
             Rect boundingRect = Imgproc.boundingRect(mat);
-            if (boundingRect.area() > areaMax) {
-                biggestMat = mat;
+            double ratio = boundingRect.height / boundingRect.width;
+            if (ratio < 11.0/3.5 && ratio > 11.0/8.0) {
+                if (boundingRect.area() > areaMax) {
+                    biggestMat = mat;
+                }
             }
         }
 
@@ -39,10 +42,13 @@ public class LoadingStationRunner extends TargetTrackingRunner<LoadingStationPip
             Point centerTop = new Point((target.upperRight.x + target.upperLeft.x) / 2.0,
                     (target.upperRight.y + target.upperLeft.y) / 2.0);
 
+            // Outline the loading station target in blue
             Imgproc.line(image, target.upperLeft, target.upperRight, Color.BLUE, 2);
             Imgproc.line(image, target.upperRight, target.bottomRight, Color.BLUE, 2);
             Imgproc.line(image, target.bottomRight, target.bottomLeft, Color.BLUE, 2);
             Imgproc.line(image, target.bottomLeft, target.upperLeft, Color.BLUE, 2);
+
+            // Draw the center line in red
             Imgproc.line(image, centerBottom, centerTop, Color.RED, 1);
         }
 
