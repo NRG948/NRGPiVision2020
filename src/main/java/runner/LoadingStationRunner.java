@@ -27,11 +27,11 @@ public class LoadingStationRunner extends TargetTrackingRunner<LoadingStationPip
         for (MatOfPoint mat : pipeline.findContoursOutput()) {
             Rect boundingRect = Imgproc.boundingRect(mat);
             double ratio = boundingRect.height / boundingRect.width;
-            if (ratio < 11.0/3.5 && ratio > 11.0/8.0) {
+            //if (ratio < 11.0/3.5 && ratio > 11.0/8.0) {
                 if (boundingRect.area() > areaMax) {
                     biggestMat = mat;
                 }
-            }
+           // }
         }
 
         if (biggestMat != null) {
@@ -56,7 +56,7 @@ public class LoadingStationRunner extends TargetTrackingRunner<LoadingStationPip
             SmartDashboard.putBoolean("Vision/LoadingStation/HasTarget", true);
             SmartDashboard.putNumber("Vision/LoadingStation/Height", target.height);
             SmartDashboard.putNumber("Vision/LoadingStation/DistanceInches", target.distance);
-            SmartDashboard.putNumber("Vision/LoadingStation/CenterX", target.centerX);
+            SmartDashboard.putNumber("Vision/LoadingStation/Angle", target.angle);
             SmartDashboard.putNumber("Vision/LoadingStation/Skew", target.skew);
             SmartDashboard.putNumber("Vision/LoadingStation/SkewDegrees", target.skewDegrees);
         } else {

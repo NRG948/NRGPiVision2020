@@ -6,7 +6,9 @@ import org.opencv.core.Point;
 public class LoadingStationTarget {
     private final double TARGET_HEIGHT_INCHES = 11.0;
     private final double IMAGE_CENTER_Y = 480.0 / 2;
+    private final double IMAGE_CENTER_X = 640.0 / 2;
     private final double HALF_IMAGE_FOV_Y = Math.atan(17.4375 / 37);
+    private final double HALF_IMAGE_FOV_X = Math.atan(36.0 / 57.125);
     
     public double height;
     public double centerX;
@@ -17,6 +19,7 @@ public class LoadingStationTarget {
     public double distance;
     public double skew;
     public double skewDegrees;
+    public double angle;
 
     public LoadingStationTarget(double height, double centerX, Point upperLeft, Point upperRight, Point bottomLeft,
             Point bottomRight, double distance, double skew, double skewDegrees) {
@@ -74,12 +77,13 @@ public class LoadingStationTarget {
         double widthTop = Math.sqrt(Math.pow(upperRight.x - upperLeft.x, 2.0) + Math.pow(upperRight.y - upperLeft.y, 2.0));
         double width = (widthBottom + widthTop) / 2.0;
 
-        centerX = (bottomRight.x - bottomLeft.x + upperRight.x - upperRight.y) / 2.0;
+        centerX = (bottomRight.x + bottomLeft.x + upperRight.x + upperLeft.x) / 4.0;
         
         int leftOrRight = heightRight > heightLeft ? 1 : -1;
         // Skew is from -1.0 to 1.0, with negative values representing the robot being to the left of the target, and positive to the right
         skew = Math.abs(1 - (11.0 / 7.0) * (width / height)) * leftOrRight; 
         skewDegrees = Math.acos(Math.min(1.0, (11.0 / 7.0) * (width / height))) * (180 / Math.PI) * leftOrRight;
         distance = (TARGET_HEIGHT_INCHES * IMAGE_CENTER_Y / (height * Math.tan(HALF_IMAGE_FOV_Y)));
+        angle = -Math.toDegrees(Math.atan2(centerX - IMAGE_CENTER_X, IMAGE_CENTER_X / Math.tan(HALF_IMAGE_FOV_X)));
     }
 }

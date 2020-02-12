@@ -24,6 +24,6 @@ public class FuelCellTarget {
     }
     public double getAngleToTarget() {
         double deltaX = center.x - IMAGE_CENTER_X;
-        return Math.toDegrees(Math.atan2(deltaX, IMAGE_CENTER_X / Math.tan(HALF_IMAGE_FOV)));
+        return -Math.toDegrees(Math.atan2(deltaX, IMAGE_CENTER_X / Math.tan(HALF_IMAGE_FOV)));
     }
 }
