@@ -1,11 +1,22 @@
 package pipeline;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import edu.wpi.first.vision.VisionPipeline;
-import org.opencv.core.*;
-import org.opencv.imgproc.*;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.HashMap;
 
+import edu.wpi.first.vision.VisionPipeline;
+
+import org.opencv.core.*;
+import org.opencv.core.Core.*;
+import org.opencv.features2d.FeatureDetector;
+import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.imgproc.*;
+import org.opencv.objdetect.*;
 
 /**
  * LoadingStationPipeline class.
@@ -34,16 +45,16 @@ public class LoadingStationPipeline implements VisionPipeline {
 	public void process(Mat source0) {
 		// Step HSV_Threshold0:
 		Mat hsvThresholdInput = source0;
-		double[] hsvThresholdHue = { 19.424460431654676, 96.66666666666666 };
-		double[] hsvThresholdSaturation = { 20.638489208633093, 255.0 };
-		double[] hsvThresholdValue = { 197.21223021582736, 255.0 };
+		double[] hsvThresholdHue = { 45.32374100719424, 98.7144521424659 };
+		double[] hsvThresholdSaturation = { 64.97302304068916, 255.0 };
+		double[] hsvThresholdValue = { 154.4064631565012, 255.0 };
 		hsvThreshold(hsvThresholdInput, hsvThresholdHue, hsvThresholdSaturation, hsvThresholdValue, hsvThresholdOutput);
 
 		// Step CV_erode0:
 		Mat cvErodeSrc = hsvThresholdOutput;
 		Mat cvErodeKernel = new Mat();
 		Point cvErodeAnchor = new Point(-1, -1);
-		double cvErodeIterations = 1;
+		double cvErodeIterations = 1.0;
 		int cvErodeBordertype = Core.BORDER_CONSTANT;
 		Scalar cvErodeBordervalue = new Scalar(-1);
 		cvErode(cvErodeSrc, cvErodeKernel, cvErodeAnchor, cvErodeIterations, cvErodeBordertype, cvErodeBordervalue,
