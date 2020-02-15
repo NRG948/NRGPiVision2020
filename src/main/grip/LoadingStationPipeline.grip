@@ -75,7 +75,7 @@
     <language>Java</language>
     <className>LoadingStationPipeline</className>
     <implementWpilibPipeline>true</implementWpilibPipeline>
-    <saveDir>C:\Users\murth\GRIP</saveDir>
+    <saveDir>C:\Users\murth\Documents\GitHub\NRGPiVision2020\src\main\java\pipeline</saveDir>
     <packageName>pipeline</packageName>
     <moduleName>grip</moduleName>
   </codeGenerationSettings>
