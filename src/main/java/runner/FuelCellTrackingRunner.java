@@ -64,4 +64,16 @@ public class FuelCellTrackingRunner extends TargetTrackingRunner<FuelCellTrackin
       SmartDashboard.putBoolean("Vision/fuelCell/hasTarget", false);
     }
   }
+
+  @Override
+  public void start() {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public void stop() {
+    // TODO Auto-generated method stub
+
+  }
 }

@@ -104,4 +104,16 @@ public abstract class TargetTrackingRunner<Pipeline extends VisionPipeline> {
      * @param image The processed image.
      */
     protected abstract void process(Pipeline pipeline, Mat image);
+
+    /**
+     * Starts the GRIP pipeline.
+     */
+    public abstract void start();
+
+
+    /**
+     * Stops the GRIP pipeline.
+     */
+    public abstract void stop();
+
 }
