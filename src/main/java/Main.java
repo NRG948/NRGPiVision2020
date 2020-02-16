@@ -321,17 +321,24 @@ public final class Main {
           new LoadingStationRunner(cameras.get(0), processedVideo));
 
       Thread visionThread = new Thread(() -> {
-        // TODO Remove the following line once pipeline selection is implemented in the robot code.
-        SmartDashboard.putString("Vision/runnerName", FuelCellTrackingRunner.class.getSimpleName());
-
+        TargetTrackingRunner<?> lastRunner = null;
         for (;;) {
           String runnerName = SmartDashboard.getString("Vision/runnerName",
               FuelCellTrackingRunner.class.getSimpleName());
           TargetTrackingRunner<?> runner = runners.get(runnerName);
 
+          if (runner != lastRunner) {
+            if (lastRunner != null) {
+              lastRunner.stop();
+            }
+            if (runner != null) {
+              runner.start();
+            }
+          }
           if (runner != null) {
             runner.runOnce();
           }
+          lastRunner = runner;
         }
       });
 
