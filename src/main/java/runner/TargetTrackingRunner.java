@@ -22,6 +22,7 @@ public abstract class TargetTrackingRunner<Pipeline extends VisionPipeline> {
     private VisionRunner<Wrapper> runner;
     private long pipelineStartTime;
     private long postProcessStartTime;
+    private int genCount = 0;
 
     /**
      * A wrapper that allows us to capture the current image to be processed by the
@@ -83,6 +84,7 @@ public abstract class TargetTrackingRunner<Pipeline extends VisionPipeline> {
         long pipelineEndTime = System.nanoTime();
         SmartDashboard.putNumber("Vision/Latency/totalTime", Convert.nanosToMillis(pipelineEndTime-this.pipelineStartTime));
         SmartDashboard.putNumber("Vision/Latency/postProcessTime", Convert.nanosToMillis(pipelineEndTime-this.postProcessStartTime));
+        SmartDashboard.putNumber("Vision/genCount", genCount++);
     }
 
     /**
