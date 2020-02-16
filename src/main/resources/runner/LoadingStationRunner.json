@@ -27,7 +27,7 @@
         {"name":"h264_i_frame_period","value":60},
         {"name":"h264_level","value":11},
         {"name":"h264_profile","value":4},
-        {"name":"auto_exposure","value":0},
+        {"name":"auto_exposure","value":1},
         {"name":"exposure_time_absolute","value":25},
         {"name":"exposure_dynamic_framerate","value":false},
         {"name":"auto_exposure_bias","value":12},
