@@ -1,9 +1,5 @@
 package runner;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -71,21 +67,11 @@ public class FuelCellTrackingRunner extends TargetTrackingRunner<FuelCellTrackin
 
   @Override
   public void start() {
-    // TODO Auto-generated method stub
-    // try {
-    //   URL resource = this.getClass().getResource("FuelCellTrackingRunner.json");
-    //   File resourceFile = new File(resource.getFile());
-    //   String configuration = new String(Files.readAllBytes(resourceFile.toPath()));
-    //   getVideoSource().setConfigJson(configuration);
-    // } catch (IOException e) {
-    //   // TODO Auto-generated catch block
-    //   e.printStackTrace();
-    // }
+    loadCameraConfig("FuelCellTrackingRunner.json");
   }
 
   @Override
   public void stop() {
-    // TODO Auto-generated method stub
 
   }
 }

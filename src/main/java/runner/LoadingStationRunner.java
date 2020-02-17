@@ -26,12 +26,12 @@ public class LoadingStationRunner extends TargetTrackingRunner<LoadingStationPip
         MatOfPoint biggestMat = null;
         for (MatOfPoint mat : pipeline.findContoursOutput()) {
             Rect boundingRect = Imgproc.boundingRect(mat);
-            double ratio = boundingRect.height / boundingRect.width;
+            //double ratio = boundingRect.height / boundingRect.width;
             //if (ratio < 11.0/3.5 && ratio > 11.0/8.0) {
                 if (boundingRect.area() > areaMax) {
                     biggestMat = mat;
                 }
-           // }
+            //}
         }
 
         if (biggestMat != null) {
@@ -66,13 +66,11 @@ public class LoadingStationRunner extends TargetTrackingRunner<LoadingStationPip
 
     @Override
     public void start() {
-        // TODO Auto-generated method stub
-
+        loadCameraConfig("LoadingStationRunner.json");
     }
 
     @Override
     public void stop() {
-        // TODO Auto-generated method stub
 
     }
 

@@ -1,5 +1,16 @@
 package runner;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystemNotFoundException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
 
@@ -52,15 +63,32 @@ public abstract class TargetTrackingRunner<Pipeline extends VisionPipeline> {
         this.pipeline = pipeline;
         this.processedVideo = processedVideo;
         this.runner = new VisionRunner<Wrapper>(videoSource, new Wrapper(), this::unwrap);
+
         VideoMode videoMode = processedVideo.getVideoMode();
         this.processedImage = new Mat(videoMode.height, videoMode.width, videoMode.pixelFormat.getValue());
-
+        
+        // We need to load the zip file system provider in order to access the json files
+        URI resource = null;
+        try {
+            resource = this.getClass().getResource("FuelCellTrackingRunner.json").toURI();
+            FileSystem zipfs = FileSystems.getFileSystem(resource);
+        } catch (FileSystemNotFoundException e) {
+            Map<String, String> env = new HashMap<>();
+            env.put("create", "true");
+            try {
+                FileSystem zipfs = FileSystems.newFileSystem(resource, env);
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+        } catch (URISyntaxException e2) {
+            e2.printStackTrace();
+        }
     }
 
     /**
      * Returns the input video source.
      * 
-     * @return
+     * @return The input video source.
      */
     protected VideoSource getVideoSource() {
         return this.videoSource;
@@ -69,7 +97,7 @@ public abstract class TargetTrackingRunner<Pipeline extends VisionPipeline> {
     /***
      * returns the annotated output video.
      * 
-     * @return
+     * @return The annotated output video.
      */
     protected CvSource getProcessedVideo() {
         return this.processedVideo;
@@ -79,17 +107,19 @@ public abstract class TargetTrackingRunner<Pipeline extends VisionPipeline> {
      * Runs one iteration of the GRIP pipeline.
      */
     public void runOnce() {
-        //One iteration of the GRIP pipeline
+        // One iteration of the GRIP pipeline
         this.runner.runOnce();
-        //Put the processed image to the output video stream
+        // Put the processed image to the output video stream
         if (image != null) {
             Imgproc.resize(this.image, this.processedImage, this.processedImage.size());
             this.processedVideo.putFrame(this.processedImage);
         }
-        //Report latency statistics to smart dashboard
+        // Report latency statistics to smart dashboard
         long pipelineEndTime = System.nanoTime();
-        SmartDashboard.putNumber("Vision/Latency/totalTime", Convert.nanosToMillis(pipelineEndTime-this.pipelineStartTime));
-        SmartDashboard.putNumber("Vision/Latency/postProcessTime", Convert.nanosToMillis(pipelineEndTime-this.postProcessStartTime));
+        SmartDashboard.putNumber("Vision/Latency/totalTime",
+                Convert.nanosToMillis(pipelineEndTime - this.pipelineStartTime));
+        SmartDashboard.putNumber("Vision/Latency/postProcessTime",
+                Convert.nanosToMillis(pipelineEndTime - this.postProcessStartTime));
         SmartDashboard.putNumber("Vision/genCount", genCount++);
     }
 
@@ -105,11 +135,24 @@ public abstract class TargetTrackingRunner<Pipeline extends VisionPipeline> {
     }
 
     /**
+     * Loads and sets the camera config for the specified file.
+     */
+    protected void loadCameraConfig(String jsonFile) {
+        try {
+            URI resource = this.getClass().getResource(jsonFile).toURI();
+            String configuration = new String(Files.readAllBytes(Paths.get(resource)));
+            getVideoSource().setConfigJson(configuration);
+        } catch (IOException | URISyntaxException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * This method is implemented by a subclass to process the GRIP pipeline outputs
      * for the current image.
      * 
      * @param pipeline The GRIP pipeline.
-     * @param image The processed image.
+     * @param image    The processed image.
      */
     protected abstract void process(Pipeline pipeline, Mat image);
 
@@ -117,7 +160,6 @@ public abstract class TargetTrackingRunner<Pipeline extends VisionPipeline> {
      * Starts the GRIP pipeline.
      */
     public abstract void start();
-
 
     /**
      * Stops the GRIP pipeline.
