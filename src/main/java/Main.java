@@ -314,7 +314,7 @@ public final class Main {
 
     // start image processing on camera 0 if present
     if (cameras.size() >= 1) {
-      CvSource processedVideo = CameraServer.getInstance().putVideo("Processed", 640, 480);
+      CvSource processedVideo = CameraServer.getInstance().putVideo("Processed", 320, 240);
 
       Map<String, TargetTrackingRunner<?>> runners = Map.of(FuelCellTrackingRunner.class.getSimpleName(),
           new FuelCellTrackingRunner(cameras.get(0), processedVideo), LoadingStationRunner.class.getSimpleName(),

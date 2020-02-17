@@ -1,8 +1,10 @@
 package runner;
 
 import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
 
 import edu.wpi.cscore.CvSource;
+import edu.wpi.cscore.VideoMode;
 import edu.wpi.cscore.VideoSource;
 import edu.wpi.first.vision.VisionPipeline;
 import edu.wpi.first.vision.VisionRunner;
@@ -19,6 +21,7 @@ public abstract class TargetTrackingRunner<Pipeline extends VisionPipeline> {
     private VideoSource videoSource;
     private CvSource processedVideo;
     private Mat image;
+    private Mat processedImage;
     private VisionRunner<Wrapper> runner;
     private long pipelineStartTime;
     private long postProcessStartTime;
@@ -49,6 +52,8 @@ public abstract class TargetTrackingRunner<Pipeline extends VisionPipeline> {
         this.pipeline = pipeline;
         this.processedVideo = processedVideo;
         this.runner = new VisionRunner<Wrapper>(videoSource, new Wrapper(), this::unwrap);
+        VideoMode videoMode = processedVideo.getVideoMode();
+        this.processedImage = new Mat(videoMode.height, videoMode.width, videoMode.pixelFormat.getValue());
 
     }
 
@@ -78,7 +83,8 @@ public abstract class TargetTrackingRunner<Pipeline extends VisionPipeline> {
         this.runner.runOnce();
         //Put the processed image to the output video stream
         if (image != null) {
-            this.processedVideo.putFrame(this.image);
+            Imgproc.resize(this.image, this.processedImage, this.processedImage.size());
+            this.processedVideo.putFrame(this.processedImage);
         }
         //Report latency statistics to smart dashboard
         long pipelineEndTime = System.nanoTime();
