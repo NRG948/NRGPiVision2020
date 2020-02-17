@@ -72,7 +72,6 @@ public class FuelCellTrackingRunner extends TargetTrackingRunner<FuelCellTrackin
 
   @Override
   public void stop() {
-    // TODO Auto-generated method stub
 
   }
 }

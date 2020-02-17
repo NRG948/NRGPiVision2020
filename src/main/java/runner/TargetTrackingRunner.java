@@ -82,7 +82,7 @@ public abstract class TargetTrackingRunner<Pipeline extends VisionPipeline> {
     /**
      * Returns the input video source.
      * 
-     * @return
+     * @return The input video source.
      */
     protected VideoSource getVideoSource() {
         return this.videoSource;
@@ -91,7 +91,7 @@ public abstract class TargetTrackingRunner<Pipeline extends VisionPipeline> {
     /***
      * returns the annotated output video.
      * 
-     * @return
+     * @return The annotated output video.
      */
     protected CvSource getProcessedVideo() {
         return this.processedVideo;
