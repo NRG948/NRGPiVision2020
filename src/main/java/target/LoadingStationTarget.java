@@ -3,6 +3,9 @@ package target;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
 
+/**
+ * A class representing a loading station target.
+ */
 public class LoadingStationTarget {
     private final double TARGET_HEIGHT_INCHES = 11.0;
     private final double IMAGE_CENTER_Y = 480.0 / 2;
@@ -21,19 +24,11 @@ public class LoadingStationTarget {
     public double skewDegrees;
     public double angle;
 
-    public LoadingStationTarget(double height, double centerX, Point upperLeft, Point upperRight, Point bottomLeft,
-            Point bottomRight, double distance, double skew, double skewDegrees) {
-        this.height = height;
-        this.centerX = centerX;
-        this.upperLeft = upperLeft;
-        this.upperRight = upperRight;
-        this.bottomLeft = bottomLeft;
-        this.bottomRight = bottomRight;
-        this.distance = distance;
-        this.skew = skew;
-        this.skewDegrees = skewDegrees;
-    }
-
+    /**
+     * Constructs an instance of this class.
+     * 
+     * @param mat A collection of points defining the outline of the target.
+     */
     public LoadingStationTarget(MatOfPoint mat) {
         upperLeft = new Point(0, 0);
         upperRight = new Point(0, 0);
