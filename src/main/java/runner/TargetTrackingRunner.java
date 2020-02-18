@@ -1,15 +1,6 @@
 package runner;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystemNotFoundException;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
@@ -21,6 +12,7 @@ import edu.wpi.first.vision.VisionPipeline;
 import edu.wpi.first.vision.VisionRunner;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import utilities.Convert;
+import utilities.ResourceUtils;
 
 /**
  * Genaric class to manage running a GRIP pipeline
@@ -66,23 +58,6 @@ public abstract class TargetTrackingRunner<Pipeline extends VisionPipeline> {
 
         VideoMode videoMode = processedVideo.getVideoMode();
         this.processedImage = new Mat(videoMode.height, videoMode.width, videoMode.pixelFormat.getValue());
-        
-        // We need to load the zip file system provider in order to access the json files
-        URI resource = null;
-        try {
-            resource = this.getClass().getResource("FuelCellTrackingRunner.json").toURI();
-            FileSystem zipfs = FileSystems.getFileSystem(resource);
-        } catch (FileSystemNotFoundException e) {
-            Map<String, String> env = new HashMap<>();
-            env.put("create", "true");
-            try {
-                FileSystem zipfs = FileSystems.newFileSystem(resource, env);
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-        } catch (URISyntaxException e2) {
-            e2.printStackTrace();
-        }
     }
 
     /**
@@ -139,10 +114,9 @@ public abstract class TargetTrackingRunner<Pipeline extends VisionPipeline> {
      */
     protected void loadCameraConfig(String jsonFile) {
         try {
-            URI resource = this.getClass().getResource(jsonFile).toURI();
-            String configuration = new String(Files.readAllBytes(Paths.get(resource)));
+            String configuration = ResourceUtils.loadJsonResource(this.getClass(), jsonFile);
             getVideoSource().setConfigJson(configuration);
-        } catch (IOException | URISyntaxException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
