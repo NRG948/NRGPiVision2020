@@ -1,5 +1,8 @@
 package target;
 
+import static utilities.Constants.HALF_IMAGE_FOV_X;
+import static utilities.Constants.IMAGE_CENTER_X;
+
 import org.opencv.core.Point;
 
 /**
@@ -7,15 +10,14 @@ import org.opencv.core.Point;
  */
 public class FuelCellTarget {
     private static final double TARGET_WIDTH_INCHES = 7.1;
-    private static final double HALF_IMAGE_FOV = (Math.atan(36.0 / 57.125));
-    private static final double IMAGE_CENTER_X = 640/2;
 
     private Point center;
     private double diameterInPixels;
 
     /**
      * Constructs an instance of this class.
-     * @param center The center point of the target in the image.
+     * 
+     * @param center           The center point of the target in the image.
      * @param diameterInPixels The diameter of the target, in pixels.
      */
     public FuelCellTarget(Point center, double diameterInPixels) {
@@ -28,7 +30,7 @@ public class FuelCellTarget {
      * 
      * @return The center of the target in the image.
      */
-    public Point getCenter(){ 
+    public Point getCenter() {
         return center;
     }
 
@@ -37,7 +39,7 @@ public class FuelCellTarget {
      * 
      * @return The diameter of the target, in pixels.
      */
-    public double getDiameterInPixels(){
+    public double getDiameterInPixels() {
         return diameterInPixels;
     }
 
@@ -46,8 +48,8 @@ public class FuelCellTarget {
      * 
      * @return The distance to the target, in inches.
      */
-    public double getDistanceToTarget(){
-        double distance = (TARGET_WIDTH_INCHES * IMAGE_CENTER_X / (diameterInPixels * Math.tan(HALF_IMAGE_FOV)));
+    public double getDistanceToTarget() {
+        double distance = (TARGET_WIDTH_INCHES * IMAGE_CENTER_X / (diameterInPixels * Math.tan(HALF_IMAGE_FOV_X)));
         return distance;
     }
 
@@ -58,6 +60,6 @@ public class FuelCellTarget {
      */
     public double getAngleToTarget() {
         double deltaX = center.x - IMAGE_CENTER_X;
-        return -Math.toDegrees(Math.atan2(deltaX, IMAGE_CENTER_X / Math.tan(HALF_IMAGE_FOV)));
+        return -Math.toDegrees(Math.atan2(deltaX, IMAGE_CENTER_X / Math.tan(HALF_IMAGE_FOV_X)));
     }
 }
