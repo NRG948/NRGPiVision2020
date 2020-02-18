@@ -16,13 +16,13 @@ import java.io.InputStream;
 public class ResourceUtils {
     /**
      * loads a resource as a json string
-     * @param obj The class object for the class loading the resource
+     * @param classObj The class object for the object loading the resource
      * @param resource The name of the resource to load
      * @return Returns the resource as a json string
      * @throws IOException
      */
-    public static String loadJsonResource(Class<?> obj, String resource) throws IOException {
-        InputStream stream = obj.getResourceAsStream(resource);
+    public static String loadJsonResource(Class<?> classObj, String resource) throws IOException {
+        InputStream stream = classObj.getResourceAsStream(resource);
         return new String (stream.readAllBytes());
     }
 }
