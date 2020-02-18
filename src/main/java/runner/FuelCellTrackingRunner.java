@@ -21,6 +21,8 @@ import utilities.Color;
  */
 public class FuelCellTrackingRunner extends TargetTrackingRunner<FuelCellTrackingPipeLine> {
 
+  private static final String VISION_FUEL_CELL_HAS_TARGET_KEY = "Vision/fuelCell/hasTarget";
+
   /**
    * Contructs an instance of this class.
    * 
@@ -56,12 +58,12 @@ public class FuelCellTrackingRunner extends TargetTrackingRunner<FuelCellTrackin
 
     // Send Target data to smartdashboard
     if (!ballTargets.isEmpty()) {
-      SmartDashboard.putBoolean("Vision/fuelCell/hasTarget", true);
+      SmartDashboard.putBoolean(VISION_FUEL_CELL_HAS_TARGET_KEY, true);
       FuelCellTarget fuelCellTarget = ballTargets.get(0);
       SmartDashboard.putNumber("Vision/fuelCell/distance", fuelCellTarget.getDistanceToTarget());
       SmartDashboard.putNumber("Vision/fuelCell/angle", fuelCellTarget.getAngleToTarget());
     } else {
-      SmartDashboard.putBoolean("Vision/fuelCell/hasTarget", false);
+      SmartDashboard.putBoolean(VISION_FUEL_CELL_HAS_TARGET_KEY, false);
     }
   }
 
@@ -72,6 +74,6 @@ public class FuelCellTrackingRunner extends TargetTrackingRunner<FuelCellTrackin
 
   @Override
   public void stop() {
-
+    SmartDashboard.putBoolean(VISION_FUEL_CELL_HAS_TARGET_KEY, false);
   }
 }

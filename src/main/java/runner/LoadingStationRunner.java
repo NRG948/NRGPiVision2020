@@ -15,6 +15,8 @@ import utilities.Color;
 
 public class LoadingStationRunner extends TargetTrackingRunner<LoadingStationPipeline> {
 
+    private static final String VISION_LOADING_STATION_HAS_TARGET_KEY = "Vision/LoadingStation/HasTarget";
+
     public LoadingStationRunner(VideoSource videoSource, CvSource processedVideo) {
         super(videoSource, new LoadingStationPipeline(), processedVideo);
     }
@@ -53,14 +55,14 @@ public class LoadingStationRunner extends TargetTrackingRunner<LoadingStationPip
         }
 
         if (target != null) {
-            SmartDashboard.putBoolean("Vision/LoadingStation/HasTarget", true);
+            SmartDashboard.putBoolean(VISION_LOADING_STATION_HAS_TARGET_KEY, true);
             SmartDashboard.putNumber("Vision/LoadingStation/Height", target.height);
             SmartDashboard.putNumber("Vision/LoadingStation/DistanceInches", target.distance);
             SmartDashboard.putNumber("Vision/LoadingStation/Angle", target.angle);
             SmartDashboard.putNumber("Vision/LoadingStation/Skew", target.skew);
             SmartDashboard.putNumber("Vision/LoadingStation/SkewDegrees", target.skewDegrees);
         } else {
-            SmartDashboard.putBoolean("Vision/LoadingStation/HasTarget", false);
+            SmartDashboard.putBoolean(VISION_LOADING_STATION_HAS_TARGET_KEY, false);
         }
     }
 
@@ -71,7 +73,7 @@ public class LoadingStationRunner extends TargetTrackingRunner<LoadingStationPip
 
     @Override
     public void stop() {
-
+        SmartDashboard.putBoolean(VISION_LOADING_STATION_HAS_TARGET_KEY, false);
     }
 
 }
