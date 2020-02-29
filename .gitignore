@@ -96,3 +96,10 @@ gradle-app.setting
 !wpiHal.jar
 !wpilibj.jar
 !wpiutil.jar
+
+# # VS Code Specific Java Settings
+.classpath
+.project
+.settings/
+bin/
+imgui.ini
