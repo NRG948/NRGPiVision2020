@@ -6,8 +6,6 @@
     "height":  480,
     "fps": 30,
     "brightness": 50,
-    "white balance": "auto",
-    "exposure": "auto",
     "properties": [          
         {"name":"connect_verbose","value":1},
         {"name":"contrast","value":50},
