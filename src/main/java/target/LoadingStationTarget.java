@@ -88,7 +88,7 @@ public class LoadingStationTarget {
         
         double distanceInPixels = IMAGE_CENTER_Y / Math.tan(HALF_IMAGE_FOV_Y);
         // We're leaving angleY in radians because we're using it up right away.
-        double angleY = Math.atan2((centerY - IMAGE_CENTER_Y - 
+        double angleY = Math.atan2((IMAGE_CENTER_Y - centerY -
                 (Math.tan(Math.toRadians(MOUNTING_ANGLE)) * distanceInPixels)), distanceInPixels);
         
         distance = (distanceInPixels / Math.cos(angleY)) * (TARGET_HEIGHT_INCHES / height);

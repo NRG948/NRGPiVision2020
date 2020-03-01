@@ -43,7 +43,7 @@ public class LoadingStationPipeline implements VisionPipeline {
 		Mat hsvThresholdInput = source0;
 		double[] hsvThresholdHue = {45.32374100719424, 98.7144521424659};
 		double[] hsvThresholdSaturation = {64.97302304068916, 255.0};
-		double[] hsvThresholdValue = {129.94604608137834, 255.0};
+		double[] hsvThresholdValue = {48.92086476730788, 255.0};
 		hsvThreshold(hsvThresholdInput, hsvThresholdHue, hsvThresholdSaturation, hsvThresholdValue, hsvThresholdOutput);
 
 		// Step Find_Contours0:
