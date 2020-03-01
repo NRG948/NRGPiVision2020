@@ -58,7 +58,7 @@ public class LoadingStationRunner extends TargetTrackingRunner<LoadingStationPip
             SmartDashboard.putBoolean(VISION_LOADING_STATION_HAS_TARGET_KEY, true);
             SmartDashboard.putNumber("Vision/LoadingStation/Height", target.height);
             SmartDashboard.putNumber("Vision/LoadingStation/DistanceInches", target.distance);
-            SmartDashboard.putNumber("Vision/LoadingStation/Angle", target.angle);
+            SmartDashboard.putNumber("Vision/LoadingStation/Angle", target.angleX);
             SmartDashboard.putNumber("Vision/LoadingStation/Skew", target.skew);
             SmartDashboard.putNumber("Vision/LoadingStation/SkewDegrees", target.skewDegrees);
         } else {

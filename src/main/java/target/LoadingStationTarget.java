@@ -16,6 +16,7 @@ public class LoadingStationTarget {
 
     public double height;
     public double centerX;
+    public double centerY;
     public Point upperLeft;
     public Point upperRight;
     public Point bottomLeft;
@@ -23,7 +24,8 @@ public class LoadingStationTarget {
     public double distance;
     public double skew;
     public double skewDegrees;
-    public double angle;
+    public double angleX;
+    public double angleY;
 
     /**
      * Constructs an instance of this class.
@@ -74,6 +76,7 @@ public class LoadingStationTarget {
         double width = (widthBottom + widthTop) / 2.0;
 
         centerX = (bottomRight.x + bottomLeft.x + upperRight.x + upperLeft.x) / 4.0;
+        centerY = (bottomRight.y + bottomLeft.y + upperRight.y + upperLeft.y) / 4.0;
 
         int leftOrRight = heightRight > heightLeft ? 1 : -1;
 
@@ -81,6 +84,7 @@ public class LoadingStationTarget {
         skew = Math.abs(1 - (11.0 / 7.0) * (width / height)) * leftOrRight;
         skewDegrees = Math.acos(Math.min(1.0, (11.0 / 7.0) * (width / height))) * (180 / Math.PI) * leftOrRight;
         distance = (TARGET_HEIGHT_INCHES * IMAGE_CENTER_Y / (height * Math.tan(HALF_IMAGE_FOV_Y)));
-        angle = -Math.toDegrees(Math.atan2(centerX - IMAGE_CENTER_X, IMAGE_CENTER_X / Math.tan(HALF_IMAGE_FOV_X)));
+        angleX = -Math.toDegrees(Math.atan2(centerX - IMAGE_CENTER_X, IMAGE_CENTER_X / Math.tan(HALF_IMAGE_FOV_X)));
+        angleY = -Math.toDegrees(Math.atan2(centerY - IMAGE_CENTER_Y, IMAGE_CENTER_Y / Math.tan(HALF_IMAGE_FOV_Y)));
     }
 }
