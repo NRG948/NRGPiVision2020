@@ -31,7 +31,7 @@
         {"name":"exposure_time_absolute","value":1000},
         {"name":"exposure_dynamic_framerate","value":false},
         {"name":"auto_exposure_bias","value":12},
-        {"name":"white_balance_auto_preset","value":1},
+        {"name":"white_balance_auto_preset","value":2},
         {"name":"image_stabilization","value":false},
         {"name":"iso_sensitivity","value":0},
         {"name":"iso_sensitivity_auto","value":1},
