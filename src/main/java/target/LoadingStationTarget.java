@@ -13,6 +13,7 @@ import org.opencv.core.Point;
  */
 public class LoadingStationTarget {
     private static final double TARGET_HEIGHT_INCHES = 11.0;
+    private static final double MOUNTING_ANGLE = 15.0; // Not actual
 
     public double height;
     public double centerX;
@@ -25,7 +26,6 @@ public class LoadingStationTarget {
     public double skew;
     public double skewDegrees;
     public double angleX;
-    public double angleY;
 
     /**
      * Constructs an instance of this class.
@@ -83,8 +83,14 @@ public class LoadingStationTarget {
         // Skew is from -1.0 to 1.0, with negative values representing the robot being to the left of the target, and positive to the right
         skew = Math.abs(1 - (11.0 / 7.0) * (width / height)) * leftOrRight;
         skewDegrees = Math.acos(Math.min(1.0, (11.0 / 7.0) * (width / height))) * (180 / Math.PI) * leftOrRight;
-        distance = (TARGET_HEIGHT_INCHES * IMAGE_CENTER_Y / (height * Math.tan(HALF_IMAGE_FOV_Y)));
+        
         angleX = -Math.toDegrees(Math.atan2(centerX - IMAGE_CENTER_X, IMAGE_CENTER_X / Math.tan(HALF_IMAGE_FOV_X)));
-        angleY = -Math.toDegrees(Math.atan2(centerY - IMAGE_CENTER_Y, IMAGE_CENTER_Y / Math.tan(HALF_IMAGE_FOV_Y)));
+        
+        double distanceInPixels = IMAGE_CENTER_Y / Math.tan(HALF_IMAGE_FOV_Y);
+        // We're leaving angleY in radians because we're using it up right away.
+        double angleY = Math.atan2((centerY - IMAGE_CENTER_Y - 
+                (Math.tan(Math.toRadians(MOUNTING_ANGLE)) * distanceInPixels)), distanceInPixels);
+        
+        distance = (distanceInPixels / Math.cos(angleY)) * (TARGET_HEIGHT_INCHES / height);
     }
 }
